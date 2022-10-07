@@ -1,4 +1,5 @@
 import { AnyAction } from "@reduxjs/toolkit";
+import { KeyboardEvent } from "react";
 
 export interface IModel {
   id: string;
@@ -20,4 +21,9 @@ export interface IColumnLayoutProps {
   selectorState: IModel[];
   droppableId: string;
   updateTextShowed: (v: TUpdateTextShowed) => AnyAction;
+}
+
+export interface ICustomKeyboardEvent extends KeyboardEvent<HTMLInputElement> {
+  target: HTMLInputElement;
+  key: string;
 }
