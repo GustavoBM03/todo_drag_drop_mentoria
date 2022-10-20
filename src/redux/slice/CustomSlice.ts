@@ -1,3 +1,4 @@
+import { TActionSlice, TUpdateTextShowed } from "./../../types/index";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IModel } from "../../types";
 import { v4 as uuid } from "uuid";
@@ -26,6 +27,35 @@ export function CreateCustomSlice(name: string) {
           } as IModel,
         }),
       },
+      remove: (state, action: PayloadAction<IModel>) => {
+        const index = state.findIndex((x) => x.id === action.payload.id);
+        state.splice(index, 1);
+      },
+      completeStatus: (state, action: PayloadAction<TActionSlice>) => {
+        const index = state.findIndex((x) => x.id === action.payload.id);
+        state[index].isFinished = action.payload.isFinished;
+        state[index].updatedAt = action.payload.updatedAt;
+      },
+      reorder: (state, action) => {
+        const [removed] = state.splice(action.payload.source.index, 1);
+        state.splice(action.payload.destination.index, 0, removed);
+      },
+      update: (state, action) => {
+        state.splice(
+          action.payload.destination.index,
+          0,
+          action.payload.filterState
+        );
+      },
+      updateTextShowed: (state, action: PayloadAction<TUpdateTextShowed>) => {
+        const index = state.findIndex((x) => x.id === action.payload.id);
+        state[index].isTextShowed = action.payload.isTextShowed;
+      },
     },
   });
+
+  return {
+    actions: { add, remove, completeStatus, reorder, update, updateTextShowed },
+    reducer,
+  };
 }
