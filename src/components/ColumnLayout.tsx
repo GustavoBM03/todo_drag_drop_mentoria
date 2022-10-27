@@ -98,77 +98,75 @@ export function ColumnLayout({
         >
           Adicionar Item
         </Button>
-
-        <List sx={{ minHeight: 300 }}>
-          {selectorState.map((item, index) => {
-            return (
-              <ListItem
-                sx={{
-                  position: "relative",
-                  border: "1px solid #989898",
-                  bgColor: "white",
-                  my: 1,
-                  borderRadius: "3px",
-                  "& .MuiTypography-root": {
-                    display: "flex",
-                    alignItems: "center",
-                  },
-                }}
-                key={item.id}
-              >
-                <ListItemText
-                  sx={{
-                    textDecoration: item.isFinished ? "line-through" : "none",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  <IconButton sx={{ p: 1, mr: 1 }}>
-                    <ArrowDownwardIcon />
-                  </IconButton>
-
-                  <Box
-                    component="span"
-                    width="100%"
-                    position="absolute"
-                    top="0"
-                    fontSize=".7rem"
-                  >
-                    {item.updatedAt ? "Atualizado " : "Criado "} at:
-                    {" " + item.updatedAt || item.createdAt}
-                  </Box>
-
-                  <Box component="span" width="100%">
-                    {item.text}
-                  </Box>
-
-                  <Box display="flex" component="span">
-                    <IconButton
-                      onClick={() => dispatch(removeHandler(item.id))}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                    <Checkbox
-                      edge="end"
-                      value={item.isFinished}
-                      checked={item.isFinished}
-                      inputProps={{ "aria-label": "controlled" }}
-                      onChange={() =>
-                        dispatch(
-                          completedHandler({
-                            isFinished: !item.isFinished,
-                            id: item.id,
-                            updatedAt: new Date().toLocaleString(),
-                          })
-                        )
-                      }
-                    />
-                  </Box>
-                </ListItemText>
-              </ListItem>
-            );
-          })}
-        </List>
       </Box>
+
+      <List sx={{ minHeight: 300 }}>
+        {selectorState.map((item, index) => {
+          return (
+            <ListItem
+              sx={{
+                position: "relative",
+                border: "1px solid #989898",
+                bgColor: "white",
+                my: 1,
+                borderRadius: "3px",
+                "& .MuiTypography-root": {
+                  display: "flex",
+                  alignItems: "center",
+                },
+              }}
+              key={item.id}
+            >
+              <ListItemText
+                sx={{
+                  textDecoration: item.isFinished ? "line-through" : "none",
+                  wordBreak: "break-word",
+                }}
+              >
+                <IconButton sx={{ p: 1, mr: 1 }}>
+                  <ArrowDownwardIcon />
+                </IconButton>
+
+                <Box
+                  component="span"
+                  width="100%"
+                  position="absolute"
+                  top="0"
+                  fontSize=".7rem"
+                >
+                  {item.updatedAt ? "Atualizado " : "Criado "} em:{" "}
+                  {item.updatedAt || item.createdAt}
+                </Box>
+
+                <Box component="span" width="100%">
+                  {item.text}
+                </Box>
+
+                <Box display="flex" component="span">
+                  <IconButton onClick={() => dispatch(removeHandler(item.id))}>
+                    <DeleteIcon />
+                  </IconButton>
+                  <Checkbox
+                    edge="end"
+                    value={item.isFinished}
+                    checked={item.isFinished}
+                    inputProps={{ "aria-label": "controlled" }}
+                    onChange={() =>
+                      dispatch(
+                        completedHandler({
+                          isFinished: !item.isFinished,
+                          id: item.id,
+                          updatedAt: new Date().toLocaleString(),
+                        })
+                      )
+                    }
+                  />
+                </Box>
+              </ListItemText>
+            </ListItem>
+          );
+        })}
+      </List>
     </Box>
   );
 }

@@ -27,8 +27,8 @@ export function CreateCustomSlice(name: string) {
           } as IModel,
         }),
       },
-      remove: (state, action: PayloadAction<IModel>) => {
-        const index = state.findIndex((x) => x.id === action.payload.id);
+      remove: (state, action: PayloadAction<string>) => {
+        const index = state.findIndex((x) => x.id === action.payload);
         state.splice(index, 1);
       },
       completeStatus: (state, action: PayloadAction<TActionSlice>) => {

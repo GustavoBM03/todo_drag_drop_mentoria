@@ -2,6 +2,9 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+import { Done } from "./components/columns/Done";
+import { InProgress } from "./components/columns/InProgress";
+import { ToDo } from "./components/columns/ToDo";
 
 function App() {
   return (
@@ -11,13 +14,13 @@ function App() {
       </Typography>
       <Grid container spacing={3} justifyContent="center">
         <Grid item md={4}>
-          a
+          <ToDo />
         </Grid>
         <Grid item md={4}>
-          a
+          <InProgress />
         </Grid>
         <Grid item md={4}>
-          a
+          <Done />
         </Grid>
       </Grid>
     </Container>
