@@ -16,6 +16,7 @@ import { StoreDispatch } from "../redux/store";
 import { IColumnLayoutProps, ICustomKeyboardEvent } from "../types";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
 export function ColumnLayout({
   labelText,
@@ -23,6 +24,8 @@ export function ColumnLayout({
   removeHandler,
   completedHandler,
   selectorState,
+  droppableId,
+  updateTextShowed,
 }: IColumnLayoutProps) {
   const [textDescription, setTextDescription] = useState("");
   const [isError, setIsError] = useState({ isShow: false, text: "" });
@@ -100,73 +103,124 @@ export function ColumnLayout({
         </Button>
       </Box>
 
-      <List sx={{ minHeight: 300 }}>
-        {selectorState.map((item, index) => {
-          return (
-            <ListItem
-              sx={{
-                position: "relative",
-                border: "1px solid #989898",
-                bgColor: "white",
-                my: 1,
-                borderRadius: "3px",
-                "& .MuiTypography-root": {
-                  display: "flex",
-                  alignItems: "center",
-                },
-              }}
-              key={item.id}
-            >
-              <ListItemText
-                sx={{
-                  textDecoration: item.isFinished ? "line-through" : "none",
-                  wordBreak: "break-word",
-                }}
-              >
-                <IconButton sx={{ p: 1, mr: 1 }}>
-                  <ArrowDownwardIcon />
-                </IconButton>
+      <Droppable droppableId={droppableId}>
+        {(provided) => (
+          <List
+            sx={{
+              minHeight: 300,
+              li: { flexDirection: "column" },
+              "& .MuiListItemText-root": { width: "100%" },
+            }}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            {selectorState.map((item, index) => (
+              <Draggable key={item.id} draggableId={item.id} index={index}>
+                {(provided, snapshot) => (
+                  <ListItem
+                    sx={{
+                      position: "relative",
+                      border: "1px solid #989898",
+                      bgColor: "white",
+                      my: 1,
+                      borderRadius: "3px",
+                      "& .MuiTypography-root": {
+                        display: "flex",
+                        alignItems: "center",
+                      },
+                      transition: ".3s ease background-color",
+                      color: snapshot.isDragging ? "#fff" : "#000",
+                      bgcolor: snapshot.isDragging ? "#000" : "#fff",
+                    }}
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <ListItemText
+                      sx={{
+                        textDecoration: item.isFinished
+                          ? "line-through"
+                          : "none",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      <IconButton
+                        sx={{ p: 1, mr: 1 }}
+                        onClick={() =>
+                          dispatch(
+                            updateTextShowed({
+                              id: item.id,
+                              isTextShowed: !item.isTextShowed,
+                            })
+                          )
+                        }
+                      >
+                        <ArrowDownwardIcon
+                          sx={{
+                            color: snapshot.isDragging ? "#FFF" : "#000",
+                            transform: item.isTextShowed
+                              ? ""
+                              : "rotate(180deg)",
+                          }}
+                        />
+                      </IconButton>
 
-                <Box
-                  component="span"
-                  width="100%"
-                  position="absolute"
-                  top="0"
-                  fontSize=".7rem"
-                >
-                  {item.updatedAt ? "Atualizado " : "Criado "} em:{" "}
-                  {item.updatedAt || item.createdAt}
-                </Box>
+                      <Box
+                        component="span"
+                        width="100%"
+                        position="absolute"
+                        top="0"
+                        fontSize=".7rem"
+                      >
+                        {item.updatedAt ? "Atualizado " : "Criado "} em:{" "}
+                        {item.updatedAt || item.createdAt}
+                      </Box>
 
-                <Box component="span" width="100%">
-                  {item.text}
-                </Box>
+                      <Box component="span" width="100%">
+                        {item.text}
+                      </Box>
 
-                <Box display="flex" component="span">
-                  <IconButton onClick={() => dispatch(removeHandler(item.id))}>
-                    <DeleteIcon />
-                  </IconButton>
-                  <Checkbox
-                    edge="end"
-                    value={item.isFinished}
-                    checked={item.isFinished}
-                    inputProps={{ "aria-label": "controlled" }}
-                    onChange={() =>
-                      dispatch(
-                        completedHandler({
-                          isFinished: !item.isFinished,
-                          id: item.id,
-                          updatedAt: new Date().toLocaleString(),
-                        })
-                      )
-                    }
-                  />
-                </Box>
-              </ListItemText>
-            </ListItem>
-          );
-        })}
-      </List>
+                      <Box display="flex" component="span">
+                        <IconButton
+                          onClick={() => dispatch(removeHandler(item.id))}
+                        >
+                          <DeleteIcon
+                            sx={{
+                              color: snapshot.isDragging ? "#FFF" : "#000",
+                            }}
+                          />
+                        </IconButton>
+                        <Checkbox
+                          edge="end"
+                          value={item.isFinished}
+                          checked={item.isFinished}
+                          inputProps={{ "aria-label": "controlled" }}
+                          onChange={() =>
+                            dispatch(
+                              completedHandler({
+                                isFinished: !item.isFinished,
+                                id: item.id,
+                                updatedAt: new Date().toLocaleString(),
+                              })
+                            )
+                          }
+                        />
+                      </Box>
+                    </ListItemText>
+                    <Collapse in={item.isTextShowed}>
+                      Você pode adicionar um conteúdo aqui
+                      <span role="img" aria-label="emoji">
+                        😍😎
+                      </span>
+                    </Collapse>
+                  </ListItem>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </List>
+        )}
+      </Droppable>
     </Box>
   );
 }
